@@ -1,0 +1,17 @@
+version: "3.9"
+
+services:
+  api-gateway:
+    build:
+      context: ./Gateway
+      dockerfile: Dockerfile
+    container_name: api-gateway
+    ports:
+      - "5080:5080"
+    networks:
+      - backend
+
+networks:
+  backend:
+    external: true
+
