@@ -16,7 +16,29 @@ app.MapGet("/", () => Results.Ok(new
   status = "ok"
 }));
 
+app.Use(async (context, next) =>
+{
+  await next();
+
+  if (context.Response.HasStarted)
+  {
+    return;
+  }
+
+  if (context.Response.StatusCode != StatusCodes.Status404NotFound)
+  {
+    return;
+  }
+
+  context.Response.ContentType = "application/json";
+  await context.Response.WriteAsJsonAsync(new
+  {
+    error = "No matching route found",
+    path = context.Request.Path.Value,
+    method = context.Request.Method
+  });
+});
+
 await app.UseOcelot();
 
 app.Run();
-
